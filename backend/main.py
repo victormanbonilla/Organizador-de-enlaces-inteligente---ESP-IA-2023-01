@@ -16,9 +16,9 @@ middleware = [
 ]
 
 app = FastAPI(
-    title="Authentication API",
-    description="Api de autenticacion de GrynCar",
-    version="1.0",
+    title="API Prediccion de Paginas WEB",
+    description="Aplicacion para la clasificacion de paginas web segun su contenido",
+    version="1.1",
     openapi_url=None,
     docs_url=None,
     middleware=middleware
