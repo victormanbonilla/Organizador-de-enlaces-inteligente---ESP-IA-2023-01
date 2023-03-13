@@ -13,6 +13,10 @@ from .models import *
 from .dependencies import *
 from .settings import *
 from .jwt_decorator import jwt_validation
+from .scraping import *
+from .ml import *
+
+
 router = APIRouter()
 from .swagger import *
 
@@ -28,7 +32,7 @@ async def healthcheck(request: Request, response: Response):
     return {"status": "ok"}
 
 
-@router.post("/api/oauth2", tags=['Auth'])
+@router.post("/api/auth/oauth2", tags=['Auth'])
 async def oauth2(data: OauthPayload, response: Response):
     try:
         
@@ -75,7 +79,7 @@ async def oauth2(data: OauthPayload, response: Response):
     }
 
 
-@router.post("/api/validation", response_description="Validacion JSON Web Token", tags=['Auth'])
+@router.post("/api/auth/validation", response_description="Validacion JSON Web Token", tags=['Auth'])
 async def token_validation_external(data: Token, request: Request, response: Response):
     try:
         if check_token(data.token):
@@ -92,7 +96,7 @@ async def token_validation_external(data: Token, request: Request, response: Res
                                   message="Error")
 
 
-@router.post("/api/save_list", response_description="Save user's list", tags=['Backend'])
+@router.post("/api/lists/save_list", response_description="Save user's list", tags=['Backend'])
 @jwt_validation
 async def save_list(
         data: UserListPayload, 
@@ -124,13 +128,11 @@ async def save_list(
                                   message="Error")
         
 
-@router.get("/api/shared_list/{list_code}", response_description="Share user's list", tags=['Backend'])
-@jwt_validation
+@router.get("/api/lists/share/{list_code}", response_description="Share user's list", tags=['Backend'])
 async def share_list(
         request: Request, 
         response: Response,
         list_code: str,
-        token: Union[str, None] = Header(default=None)
     ):
                 
     try:
@@ -145,6 +147,100 @@ async def share_list(
         return ResponseModel(result, 'ok')
     except KeyError:
         return ResponseModel([], 'no data was found')  
+    except Exception as e:
+        response.status_code = ResponseStatus.HTTP_500_INTERNAL_SERVER_ERROR
+        print(str(e), flush=True)
+        return ErrorResponseModel(str(traceback.format_exc()),
+                                  code=500,
+                                  message="Error")
+
+
+@router.get("/api/lists/get_lists/{user_id_google}", response_description="Get user's lists", tags=['Backend'])
+@jwt_validation
+async def get_lists(
+        request: Request, 
+        response: Response,
+        user_id_google: str,
+        token: Union[str, None] = Header(default=None)
+    ):
+                
+    try:
+        result = sql_search(
+            table='lists',
+            parametro='user_id_google',
+            valor=user_id_google,
+            columns=['code', 'data'],
+            order_by='created_at'
+        )       
+        
+        for i in result:
+            i['data'] = json.loads(i['data'])
+            
+        return ResponseModel(result, 'ok')
+    except KeyError:
+        return ResponseModel([], 'no data was found')  
+    except Exception as e:
+        response.status_code = ResponseStatus.HTTP_500_INTERNAL_SERVER_ERROR
+        print(str(e), flush=True)
+        return ErrorResponseModel(str(traceback.format_exc()),
+                                  code=500,
+                                  message="Error")
+        
+
+@router.post("/api/model/predict", response_description="Predict one URL", tags=['model'])
+@jwt_validation
+async def get_lists(
+        data: PredictModel, 
+        request: Request, 
+        response: Response,
+        token: Union[str, None] = Header(default=None)
+    ):
+                
+    try:
+        features = extractor.transform([data.text])
+        prediction = model_naive.predict(features)
+        
+        prediction = {'Category': categories[int(prediction[0])]}
+        return ResponseModel(prediction, 'ok')
+
+    except Exception as e:
+        response.status_code = ResponseStatus.HTTP_500_INTERNAL_SERVER_ERROR
+        print(str(e), flush=True)
+        return ErrorResponseModel(str(traceback.format_exc()),
+                                  code=500,
+                                  message="Error")
+
+@router.post("/api/model/predict_table", response_description="Predict User's Pages", tags=['model'])
+@jwt_validation
+async def get_lists(
+        data: PredictTable, 
+        request: Request, 
+        response: Response,
+        token: Union[str, None] = Header(default=None)
+    ):
+                
+    try:
+        results = []
+        for url in data.urls:
+            
+            title, body = extraer_texto_web(url)
+            clean_body = clean_text(body)[:5200]
+            text = title + " " + clean_body
+            
+            translation = translator.translate(text)
+            print(translation, flush=True)
+            
+            features = extractor.transform([str(translation.text)])
+            prediction = model_naive.predict(features)
+            
+            print(prediction, flush=True)
+            category = int(prediction[0])
+            
+            prediction = {'category': categories[category], 'url': url}
+            
+            results.append(prediction)
+        return ResponseModel(results, 'ok')
+
     except Exception as e:
         response.status_code = ResponseStatus.HTTP_500_INTERNAL_SERVER_ERROR
         print(str(e), flush=True)

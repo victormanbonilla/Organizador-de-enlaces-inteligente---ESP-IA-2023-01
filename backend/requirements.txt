@@ -15,3 +15,7 @@ requests==2.28.0
 redis==4.3.3
 bcrypt
 cryptography==3.4.8
+scikit-learn==0.24.2
+beautifulsoup4
+unidecode
+googletrans==3.1.0a0

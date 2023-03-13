@@ -1,0 +1,5 @@
+beautifulsoup4
+unidecode
+nltk
+scikit-learn
+seaborn

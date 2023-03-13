@@ -12,7 +12,7 @@ ALTER TABLE users ADD INDEX id_google_index (id_google);
 CREATE TABLE `lists` (
   `id` INT AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
-  `created_at` VARCHAR(255) NOT NULL,
+  `created_at` datetime,
   `user_id_google` VARCHAR(255) NOT NULL,
   `data` VARCHAR(65535) NOT NULL,
   PRIMARY KEY (`id`),

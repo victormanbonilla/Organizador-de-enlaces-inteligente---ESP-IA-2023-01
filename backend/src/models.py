@@ -77,7 +77,33 @@ class UserListPayload(BaseModel):
                 ]
             }
         }
+
+
+class PredictModel(BaseModel):
+    text: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "text": 'example body',
+            }
+        }
         
+
+class PredictTable(BaseModel):
+    urls: List[str]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "urls": [
+                    'https://url1.com',
+                    'https://url2.com',
+                    'https://url3.com',
+                    ],
+            }
+        }
+             
 def ResponseModel(data, message):
     return {
         "data": data,

@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Train models
+feature_extractor.pkl
+model_naive.pkl
+
+
 # Distribution / packaging
 .Python
 build/
