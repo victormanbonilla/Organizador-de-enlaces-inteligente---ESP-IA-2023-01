@@ -1,0 +1,114 @@
+---
+- hosts: localhost
+  become: true
+  vars:
+    container_count: 4
+    default_container_name: docker
+    default_container_image: ubuntu
+    default_container_command: sleep 1
+  tasks:
+
+      - name: Setting timezone
+        become: yes
+        shell: timedatectl set-timezone America/Bogota
+        ignore_errors: yes 
+
+      - name: Install snap
+        become: yes
+        shell: apt update
+        ignore_errors: yes 
+
+      - name: Install snap
+        become: yes
+        shell: apt install snapd -y
+        ignore_errors: yes 
+
+      - name: ensure nginx is at the latest version
+        apt:
+          name: nginx
+          state: latest
+      - name: start nginx
+        service: 
+          name: nginx
+          state: started
+          enabled: yes  # if you want to also enable nginx
+
+      - name: Install aptitude
+        apt:
+          name: aptitude
+          state: latest
+          update_cache: true
+
+      - name: Install required system packages
+        apt:
+          pkg:
+            - apt-transport-https
+            - ca-certificates
+            - curl
+            - software-properties-common
+            - python3-pip
+            - virtualenv
+            - python3-setuptools
+          state: latest
+          update_cache: true
+
+      - name: Add Docker GPG apt Key
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+      - name: Add Docker Repository
+        apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu focal stable
+          state: present
+
+
+      - name: Update apt and install docker-ce
+        apt:
+          name: docker-ce
+          state: latest
+          update_cache: true
+
+
+      - name: Installing Docker Compose V2 
+        shell: mkdir -p ~/.docker/cli-plugins/
+
+      - name: Installing Docker Compose V2
+        shell: curl -SL https://github.com/docker/compose/releases/download/v2.15.1/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+
+      - name: Installing Docker Compose V2
+        become: yes
+        shell: chmod +x ~/.docker/cli-plugins/docker-compose
+
+      - name: Installing Docker-Compose V2
+        become: yes
+        shell: mkdir -p /usr/local/bin
+        
+      - name: Installing Docker-Compose V2
+        become: yes
+        shell: curl -SL https://github.com/docker/compose/releases/download/v2.15.1/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+
+      - name: Installing Docker-Compose V2
+        become: yes
+        shell: chmod +x /usr/local/bin/docker-compose
+
+      - name: Installing Docker-Compose V2
+        become: yes
+        shell: ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+        ignore_errors: yes 
+
+
+      - name: Provisioning Jenkins folder
+        become: yes
+        shell: mkdir /var/jenkins_home
+        ignore_errors: yes 
+ 
+      - name: Provisioning Jenkins folder
+        become: yes
+        shell: chown -R 1000:1000 /var/jenkins_home/
+        ignore_errors: yes 
+
+      - name: Provisioning Jenkins folder
+        become: yes
+        shell: chmod 777 -R /var/jenkins_home
+        ignore_errors: yes   
