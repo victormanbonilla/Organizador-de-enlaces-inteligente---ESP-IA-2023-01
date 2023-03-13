@@ -5,4 +5,4 @@ docker compose -f ./Redis/docker-compose.yaml up -d
 echo "Iniciando Backend"
 docker compose build
 docker compose down
-docker compose up --no-deps --force-recreate --remove-orphans
+docker compose up -d --no-deps --force-recreate --remove-orphans
