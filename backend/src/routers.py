@@ -41,7 +41,7 @@ async def oauth2(data: OauthPayload, response: Response):
         user = sql_search(
             table='users',
             parametro='email',
-            valor=email['email'],
+            valor=email,
             columns=['name', 'email', 'id_google', 'picture'])[0]
         
         if not user:
