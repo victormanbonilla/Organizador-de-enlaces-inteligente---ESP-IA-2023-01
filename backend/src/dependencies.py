@@ -7,8 +7,29 @@ import numpy as np
 from datetime import datetime
 import json
 import base64
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 
+def get_user_data(token):
+    try:
+        # Verificar el token y obtener la información del usuario.
+        idinfo = id_token.verify_oauth2_token(token, requests.Request())
+        if 'accounts.google.com' in idinfo['iss']:
+            # Imprimir los datos del usuario autenticado.
+            # print(f"ID de usuario: {idinfo['sub']}")
+            # print(f"Nombre: {idinfo['name']}")
+            # print(f"Email: {idinfo['email']}")
+            # print(f"Imagen de perfil: {idinfo['picture']}")
+            sub, name, email, picture = idinfo['sub'], idinfo['name'], idinfo['email'], idinfo['picture']   
+            return sub, name, email, picture
+
+        else:
+            raise ValueError('Token de autenticación no válido')
+    except ValueError as e:
+        print(f"Error al verificar token: {e}")
+        
+        
 def decode_payload(payload):
     # Decodificar la cadena base64 del payload
     decoded_payload = base64.b64decode(payload)

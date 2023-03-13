@@ -19,3 +19,4 @@ scikit-learn==0.24.2
 beautifulsoup4
 unidecode
 googletrans==3.1.0a0
+google-auth

@@ -36,19 +36,19 @@ async def healthcheck(request: Request, response: Response):
 async def oauth2(data: OauthPayload, response: Response):
     try:
         
-        oauth_data = decode_payload(data.oauth)
+        sub, name, email, picture = get_user_data(data.token)
         
         user = sql_search(
             table='users',
             parametro='email',
-            valor=oauth_data['email'],
+            valor=email['email'],
             columns=['name', 'email', 'id_google', 'picture'])[0]
         
         if not user:
             sql_insert(
                 table='users',
-                columnas=list(oauth_data.keys()),
-                valores=list(oauth_data.values()),
+                columnas=['name', 'email', 'id_google', 'picture'],
+                valores=[name, email, sub, picture],
             )
             
     except KeyError:
@@ -115,7 +115,7 @@ async def save_list(
             valores=[
                 get_random_string(30), 
                 sql_current_date(), 
-                data.user_id_google, 
+                data.email, 
                 data_str
                 ]
         )
@@ -155,12 +155,12 @@ async def share_list(
                                   message="Error")
 
 
-@router.get("/api/lists/get_lists/{user_id_google}", response_description="Get user's lists", tags=['Backend'])
+@router.get("/api/lists/get_lists/{email}", response_description="Get user's lists", tags=['Backend'])
 @jwt_validation
 async def get_lists(
         request: Request, 
         response: Response,
-        user_id_google: str,
+        email: str,
         token: Union[str, None] = Header(default=None)
     ):
                 
@@ -168,7 +168,7 @@ async def get_lists(
         result = sql_search(
             table='lists',
             parametro='user_id_google',
-            valor=user_id_google,
+            valor=email,
             columns=['code', 'data'],
             order_by='created_at'
         )       

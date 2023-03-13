@@ -48,12 +48,12 @@ class Token(BaseModel):
 
 
 class OauthPayload(BaseModel):
-    oauth: str
+    token: str
 
     class Config:
         schema_extra = {
             "example": {
-                "oauth": 'eyJ1c2VyX2lkIjogMSwgImVtYWlsIjogInRlc3RAZXhhbXBsZS5jb20iLCAiZXhwaXJlcyI6ICIyMDIzLTAzLTEzIDIwOjUyOjM0In0=',
+                "token": 'eyJ1c2VyX2lkIjogMSwgImVtYWlsIjogInRlc3RAZXhhbXBsZS5jb20iLCAiZXhwaXJlcyI6ICIyMDIzLTAzLTEzIDIwOjUyOjM0In0=',
             }
         }
 
@@ -63,13 +63,13 @@ class UserListData(BaseModel):
     url: str
         
 class UserListPayload(BaseModel):
-    user_id_google: str
+    email: str
     data: List[UserListData]
 
     class Config:
         schema_extra = {
             "example": {
-                'user_id_google': 'str',
+                'email': 'str',
                 'data': [
                     {'category': 'categoria 1', 'url': 'url_1'},
                     {'category': 'categoria 2', 'url': 'url_2'},
