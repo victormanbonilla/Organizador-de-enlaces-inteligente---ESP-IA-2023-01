@@ -67,7 +67,7 @@ async def login(data: Login, response: Response):
             table='users',
             parametro='user',
             valor=data.user,
-            columns=['user'])[0]
+            columns=['user', 'password'])[0]
 
         if not data.password == user['password']:
             raise HTTPException(
@@ -87,7 +87,7 @@ async def login(data: Login, response: Response):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={
-            "name":  user['user'],
+            "user":  user['user'],
             "route": "/home"
         },
         expires_delta=access_token_expires
