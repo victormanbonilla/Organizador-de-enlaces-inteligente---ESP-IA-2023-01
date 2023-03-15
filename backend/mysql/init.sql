@@ -1,9 +1,7 @@
 CREATE TABLE `users` (
   `id` INT AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
-  `email` VARCHAR(100) NOT NULL,
-  `id_google` VARCHAR(50) NOT NULL,
-  `picture` VARCHAR(255) NOT NULL,
+  `user` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -13,8 +11,8 @@ CREATE TABLE `lists` (
   `id` INT AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
   `created_at` datetime,
-  `user_id_google` VARCHAR(255) NOT NULL,
+  `user_fk` VARCHAR(255) NOT NULL,
   `data` VARCHAR(65535) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`user_id_google`) REFERENCES users (`id_google`)
+  FOREIGN KEY (`username_fk`) REFERENCES users (`user`)
 );

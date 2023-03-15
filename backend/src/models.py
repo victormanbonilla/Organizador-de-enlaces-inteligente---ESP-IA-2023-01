@@ -46,7 +46,19 @@ class Token(BaseModel):
             }
         }
 
+class Login(BaseModel):
+    user: str
+    password: str
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "user": 'str',
+                "password": 'str',
+            }
+        }
+        
+        
 class OauthPayload(BaseModel):
     token: str
 
@@ -63,13 +75,13 @@ class UserListData(BaseModel):
     url: str
         
 class UserListPayload(BaseModel):
-    email: str
+    user: str
     data: List[UserListData]
 
     class Config:
         schema_extra = {
             "example": {
-                'email': 'str',
+                'user': 'str',
                 'data': [
                     {'category': 'categoria 1', 'url': 'url_1'},
                     {'category': 'categoria 2', 'url': 'url_2'},
