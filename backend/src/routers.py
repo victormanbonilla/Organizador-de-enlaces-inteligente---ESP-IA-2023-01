@@ -1,4 +1,3 @@
-from .swagger import *
 from fastapi import APIRouter
 from fastapi import status as ResponseStatus
 from fastapi import Request
@@ -19,6 +18,7 @@ from .ml import *
 
 
 router = APIRouter()
+from .swagger import *
 
 
 @router.on_event("startup")
