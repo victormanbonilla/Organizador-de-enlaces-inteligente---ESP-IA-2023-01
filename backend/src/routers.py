@@ -124,7 +124,7 @@ async def save_list(
         print(data_str, flush=True)
         sql_insert(
             table='lists',
-            columnas=['code', 'created_at', 'user_id_google', 'data'],
+            columnas=['code', 'created_at', 'user_fk', 'data'],
             valores=[
                 get_random_string(30),
                 sql_current_date(),
@@ -236,23 +236,28 @@ async def get_lists(
     try:
         results = []
         for url in data.urls:
+            
+            try:
 
-            title, body = extraer_texto_web(url)
-            clean_body = clean_text(body)[:5200]
-            text = title + " " + clean_body
+                title, body = extraer_texto_web(url)
+                clean_body = clean_text(body)[:5200]
+                text = title + " " + clean_body
 
-            translation = translator.translate(text)
-            print(translation, flush=True)
+                translation = translator.translate(text)
+                print(translation, flush=True)
 
-            features = extractor.transform([str(translation.text)])
-            prediction = model_naive.predict(features)
+                features = extractor.transform([str(translation.text)])
+                prediction = model_naive.predict(features)
 
-            print(prediction, flush=True)
-            category = int(prediction[0])
+                print(prediction, flush=True)
+                category = int(prediction[0])
 
-            prediction = {'category': categories[category], 'url': url}
+                prediction = {'category': categories[category], 'url': url}
 
-            results.append(prediction)
+                results.append(prediction)
+            except:
+                results.append({'category': 'Error', 'url': url})
+                
         return ResponseModel(results, 'ok')
 
     except Exception as e:
