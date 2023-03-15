@@ -5,14 +5,14 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 );
 
-ALTER TABLE users ADD INDEX id_google_index (id_google);
+ALTER TABLE users ADD INDEX username_index (user);
 
 CREATE TABLE `lists` (
   `id` INT AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
   `created_at` datetime,
   `user_fk` VARCHAR(255) NOT NULL,
-  `data` VARCHAR(65535) NOT NULL,
+  `data` VARCHAR(5000) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`username_fk`) REFERENCES users (`user`)
+  FOREIGN KEY (`user_fk`) REFERENCES users (`user`)
 );
