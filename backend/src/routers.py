@@ -69,6 +69,12 @@ async def login(data: Login, response: Response):
             valor=data.user,
             columns=['user'])[0]
 
+        if not data.password == user['password']:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username or password",
+            )
+        
     except KeyError:
         user = False
 
@@ -117,7 +123,7 @@ async def save_list(
     response: Response,
     token: Union[str, None] = Header(default='debug')
 ):
-
+    
     try:
         print(data.data, flush=True)
         data_str = str(json.dumps(jsonable_encoder(data.data)))
