@@ -174,6 +174,30 @@ async def share_list(
                                   message="Error")
 
 
+@router.get("/api/lists/delete/{list_code}", response_description="Delete user's list", tags=['Backend'])
+async def share_list(
+    request: Request,
+    response: Response,
+    list_code: str,
+):
+
+    try:
+        sql_delete(
+            table='lists',
+            parametro='code',
+            valor=list_code,
+        )
+        
+        return {"success": True}
+    except KeyError:
+        return {"success": False}
+    except Exception as e:
+        response.status_code = ResponseStatus.HTTP_500_INTERNAL_SERVER_ERROR
+        print(str(e), flush=True)
+        return ErrorResponseModel(str(traceback.format_exc()),
+                                  code=500,
+                                  message="Error")
+
 @router.get("/api/lists/get_lists/{user}", response_description="Get user's lists", tags=['Backend'])
 @jwt_validation
 async def get_lists(
@@ -195,6 +219,8 @@ async def get_lists(
         for i in result:
             i['data'] = json.loads(i['data'])
 
+        result.reverse()
+        
         return ResponseModel(result, 'ok')
     except KeyError:
         return ResponseModel([], 'no data was found')
@@ -204,7 +230,6 @@ async def get_lists(
         return ErrorResponseModel(str(traceback.format_exc()),
                                   code=500,
                                   message="Error")
-
 
 @router.post("/api/model/predict", response_description="Predict one URL", tags=['model'])
 @jwt_validation
