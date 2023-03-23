@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  frontend_service:
+    build:
+      context: .
+      dockerfile: ./frontend-service.dockerfile
+    restart: always
+    ports:
+      - "3000:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    # environment:
