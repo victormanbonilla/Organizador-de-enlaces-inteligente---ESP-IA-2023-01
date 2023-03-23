@@ -1,0 +1,193 @@
+<script setup lang="ts">
+import TableComponent from '../components/TableComponent.vue';
+import AppInputArray from '../components/AppInputArray.vue';
+import AppSpinner from '../components/AppSpinner.vue';
+import { useConsults } from '../composables/useConsults';
+import AppModal from '../components/AppModal.vue';
+import { Table } from '../interfaces/consult';
+import { useForm } from 'vee-validate';
+import { inject, onMounted, ref } from 'vue';
+import { keyFormState } from '../utils/formKey';
+import { ElMessage } from 'element-plus';
+
+interface ConsultForm {
+  consults: Array<string>;
+}
+
+const data = ref<Table[]>();
+const [formState, setFormState] = inject(keyFormState)!;
+const spinnerState = ref(false);
+
+const { getConsults, saveConsults, deleteTable } = useConsults();
+const { handleSubmit } = useForm<ConsultForm>({
+  initialValues: {
+    consults: [''],
+  },
+});
+
+const success = () => {
+  ElMessage({
+    showClose: true,
+    message: 'Success',
+    type: 'success',
+  });
+};
+
+const getData = async () => {
+  data.value = await getConsults();
+};
+
+const onDelete = async(code: string) => {
+  const resp = await deleteTable(code);
+  if (resp) {
+    success();
+    getData();
+  }
+}
+
+const onSubmit = handleSubmit(async ({ consults }, { resetForm }) => {
+  const resp = await saveConsults(consults, spinnerState);
+  resetForm();
+  if (resp) {
+    success();
+    setFormState();
+    await getData();
+  }
+});
+
+onMounted(async () => {
+  await getData();
+});
+</script>
+
+<template>
+  <div class="home-container">
+    <div
+      v-for="(datum, index) in data"
+      :key="datum.created_at"
+      class="table-container"
+    >
+      <TableComponent
+        :consults="datum.data"
+        :date="datum.created_at"
+        :index="index"
+        :code="datum.code"
+        @delete="($emit) => onDelete($emit)"
+      />
+    </div>
+    <AppModal :active="formState">
+      <form
+        class="form-consults"
+        @submit.prevent="onSubmit"
+      >
+        <div class="title-container">
+          <h1 class="form-consults-title">
+            Consults Form
+          </h1>
+          <AppInputArray
+            id="arr-urls"
+            arr-name="consults"
+            placeholder="https://url.com"
+            title="Url"
+          />
+        </div>
+
+        <div class="btn-utils">
+          <button
+            class="btn-save"
+            type="submit"
+          >
+            Save
+          </button>
+          <button
+            class="btn-cancel"
+            type="button"
+            @click="setFormState"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </AppModal>
+    <AppSpinner :active="spinnerState" />
+  </div>
+</template>
+
+<style scoped>
+.home-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: auto;
+}
+.table-container {
+  height: auto;
+  width: 98%;
+  padding: 10px 10px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 20px;
+  margin-top: 20px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+.form-consults {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+}
+.form-consults-title {
+  font-size: 22px;
+  padding: 12px 0;
+}
+.btn-utils {
+  width: 100%;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.title-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+.btn-save {
+  border-color: transparent;
+  background-color: #9c3979;
+  color: white;
+  padding: 2px 38px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-save:active {
+  background-color: #7d2d61;
+}
+
+.btn-cancel {
+  border-color: #9c3979;
+  background-color: white;
+  color: #9c3979;
+  padding: 2px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.btn-cancel:active {
+  background-color: #cfcccc;
+}
+</style>
