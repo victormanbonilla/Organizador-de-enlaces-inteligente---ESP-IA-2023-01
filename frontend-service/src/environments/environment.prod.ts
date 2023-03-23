@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../modules/auth/composables/useAuthStore";
 
 const http = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL,
+    baseURL: "https://app.vbonilla.com/api",
 });
 
 http.interceptors.request.use(config => {
