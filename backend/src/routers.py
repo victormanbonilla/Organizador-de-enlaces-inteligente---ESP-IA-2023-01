@@ -174,7 +174,7 @@ async def share_list(
                                   message="Error")
 
 
-@router.get("/api/lists/delete/{list_code}", response_description="Delete user's list", tags=['Backend'])
+@router.delete("/api/lists/delete/{list_code}", response_description="Delete user's list", tags=['Backend'])
 async def share_list(
     request: Request,
     response: Response,
