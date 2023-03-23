@@ -7,7 +7,7 @@ services:
       dockerfile: ./frontend-service.dockerfile
     restart: always
     ports:
-      - "3000:80"
+      - "3000:8080"
     deploy:
       mode: replicated
       replicas: 1
