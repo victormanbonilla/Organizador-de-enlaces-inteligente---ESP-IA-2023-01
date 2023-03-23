@@ -7,6 +7,8 @@ import traceback
 from typing import Union
 from fastapi import FastAPI, Header
 from datetime import timedelta, datetime
+from time import sleep
+import numpy as np
 
 from .redis_cache import *
 from .models import *
@@ -278,17 +280,16 @@ async def get_lists(
                 text = title + " " + clean_body
 
                 translation = translator.translate(text)
-                print(translation, flush=True)
 
                 features = extractor.transform([str(translation.text)])
                 prediction = model_naive.predict(features)
 
-                print(prediction, flush=True)
                 category = int(prediction[0])
 
                 prediction = {'category': categories[category], 'url': url}
 
                 results.append(prediction)
+                sleep(np.random.uniform(0.2, 2.5))
             except:
                 results.append({'category': 'Error', 'url': url})
                 
