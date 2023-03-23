@@ -216,6 +216,9 @@ async def get_lists(
             order_by='created_at'
         )
 
+        if not result:
+            return ResponseModel([result], 'ok') 
+        
         for i in result:
             i['data'] = json.loads(i['data'])
 
