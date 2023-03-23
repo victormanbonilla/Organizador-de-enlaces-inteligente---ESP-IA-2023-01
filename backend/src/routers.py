@@ -1,3 +1,4 @@
+from .swagger import *
 from fastapi import APIRouter
 from fastapi import status as ResponseStatus
 from fastapi import Request
@@ -20,7 +21,6 @@ from .ml import *
 
 
 router = APIRouter()
-from .swagger import *
 
 
 @router.on_event("startup")
@@ -76,7 +76,7 @@ async def login(data: Login, response: Response):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
             )
-        
+
     except KeyError:
         user = False
 
@@ -125,7 +125,7 @@ async def save_list(
     response: Response,
     token: Union[str, None] = Header(default='debug')
 ):
-    
+
     try:
         print(data.data, flush=True)
         data_str = str(json.dumps(jsonable_encoder(data.data)))
@@ -189,7 +189,7 @@ async def share_list(
             parametro='code',
             valor=list_code,
         )
-        
+
         return {"success": True}
     except KeyError:
         return {"success": False}
@@ -199,6 +199,7 @@ async def share_list(
         return ErrorResponseModel(str(traceback.format_exc()),
                                   code=500,
                                   message="Error")
+
 
 @router.get("/api/lists/get_lists/{user}", response_description="Get user's lists", tags=['Backend'])
 @jwt_validation
@@ -219,13 +220,13 @@ async def get_lists(
         )
 
         if not result:
-            return ResponseModel([], 'ok') 
-        
+            return ResponseModel([], 'ok')
+
         for i in result:
             i['data'] = json.loads(i['data'])
 
         result.reverse()
-        
+
         return ResponseModel(result, 'ok')
     except KeyError:
         return ResponseModel([], 'no data was found')
@@ -235,6 +236,7 @@ async def get_lists(
         return ErrorResponseModel(str(traceback.format_exc()),
                                   code=500,
                                   message="Error")
+
 
 @router.post("/api/model/predict", response_description="Predict one URL", tags=['model'])
 @jwt_validation
@@ -272,7 +274,7 @@ async def get_lists(
     try:
         results = []
         for url in data.urls:
-            
+
             try:
 
                 title, body = extraer_texto_web(url)
@@ -292,7 +294,7 @@ async def get_lists(
                 sleep(np.random.uniform(0.2, 2.5))
             except:
                 results.append({'category': 'Error', 'url': url})
-                
+
         return ResponseModel(results, 'ok')
 
     except Exception as e:
