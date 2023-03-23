@@ -217,7 +217,7 @@ async def get_lists(
         )
 
         if not result:
-            return ResponseModel([result], 'ok') 
+            return ResponseModel([], 'ok') 
         
         for i in result:
             i['data'] = json.loads(i['data'])
