@@ -127,9 +127,7 @@ async def save_list(
 ):
 
     try:
-        print(data.data, flush=True)
         data_str = str(json.dumps(jsonable_encoder(data.data)))
-        print(data_str, flush=True)
         sql_insert(
             table='lists',
             columnas=['code', 'created_at', 'user_fk', 'data'],
