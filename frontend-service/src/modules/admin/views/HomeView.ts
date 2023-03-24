@@ -34,9 +34,11 @@ export default defineComponent({
     const schema = markRaw(
       object({
         consults: array().of(
-          string()
-            .matches(urlRegex, 'Enter a valid url')
-            .required('Please enter a value')
+          object({
+            url: string()
+              .matches(urlRegex, 'Enter a valid url')
+              .required('Please enter a value'),
+          })
         ),
       })
     );
@@ -62,7 +64,7 @@ export default defineComponent({
     };
 
     const onSubmit = handleSubmit(async ({ consults }, { resetForm }) => {
-      const data = consults.map(consult => (consult.url));
+      const data = consults.map((consult) => consult.url);
       const resp = await saveConsults(data, spinnerState);
       resetForm();
       if (resp) {

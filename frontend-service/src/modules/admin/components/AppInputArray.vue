@@ -47,6 +47,7 @@ const arrayState = ref(fields.value.length + 1);
       <div class="error-message-container">
         <ErrorMessage
           :name="`${arrName}[${index}].url`"
+          as="small"
           class="custom-error-message"
         />
       </div>
