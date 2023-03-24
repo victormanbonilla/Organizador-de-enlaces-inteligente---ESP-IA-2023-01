@@ -1,9 +1,10 @@
 import { inject, onMounted, ref, defineComponent, markRaw, computed } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElDialog } from 'element-plus';
 import { useForm } from 'vee-validate';
 
 import TableComponent from '../components/TableComponent.vue';
 import AppInputArray from '../components/AppInputArray.vue';
+import ShareModal from '../components/ShareModal.vue';
 import AppSpinner from '../components/AppSpinner.vue';
 import AppModal from '../components/AppModal.vue';
 
@@ -21,8 +22,10 @@ export default defineComponent({
   components: {
     TableComponent,
     AppInputArray,
+    ShareModal,
     AppSpinner,
     AppModal,
+    ElDialog,
   },
   setup: () => {
     const urlRegex =
@@ -51,7 +54,9 @@ export default defineComponent({
     const [formState, setFormState] = inject(keyFormState)!;
     const spinnerState = ref(false);
     const validForm = computed(() => !meta.value.valid);
-    
+    const activeModalShare = ref(false);
+    const sharedText = ref("");
+
     const success = () => {
       ElMessage({
         showClose: true,
@@ -92,6 +97,14 @@ export default defineComponent({
       }
     };
 
+    const shareTable = async () => {
+      await navigator.clipboard.writeText(
+        `https://demo.vbonilla.com/#/public/${sharedText.value}/`
+      );
+      activeModalShare.value = false;
+      success();
+    };
+
     onMounted(async () => {
       await getData();
     });
@@ -100,12 +113,15 @@ export default defineComponent({
       // Methods
       setFormState,
       deleteTable,
+      shareTable,
       onSubmit,
       onDelete,
       onClose,
 
       // Properties
+      activeModalShare,
       spinnerState,
+      sharedText,
       formState,
       validForm,
       data,
@@ -116,6 +132,7 @@ export default defineComponent({
       AppInputArray,
       AppSpinner,
       AppModal,
+      ElDialog,
     };
   },
 });

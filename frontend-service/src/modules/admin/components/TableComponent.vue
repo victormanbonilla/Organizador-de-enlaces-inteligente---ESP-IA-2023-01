@@ -11,13 +11,7 @@ defineProps<{
   index: number;
   code: string;
 }>();
-defineEmits(['delete']);
-
-const shareTable = async (text: string) => {
-  await navigator.clipboard.writeText(
-    `${import.meta.env.VITE_FRONTEND_URL}/#/public/${text}/`
-  );
-};
+defineEmits(['delete', 'activeModal']);
 </script>
 
 <template>
@@ -30,11 +24,11 @@ const shareTable = async (text: string) => {
       <div class="buttons-table-utils">
         <button
           class="btn-share-table"
-          @click="shareTable(code)"
+          @click="$emit('activeModal', code)"
         >
           <ShareIcon />
         </button>
-  
+
         <button
           class="btn-delete-table"
           @click="$emit('delete', code)"

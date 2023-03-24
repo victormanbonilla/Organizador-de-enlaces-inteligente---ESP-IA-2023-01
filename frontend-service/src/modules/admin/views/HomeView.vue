@@ -13,6 +13,12 @@
         :index="index"
         :code="datum.code"
         @delete="($emit) => onDelete($emit)"
+        @active-modal="
+          ($emit) => {
+            sharedText = $emit;
+            activeModalShare = true;
+          }
+        "
       />
     </div>
     <AppModal :active="formState">
@@ -52,6 +58,25 @@
       </form>
     </AppModal>
     <AppSpinner :active="spinnerState" />
+
+    <el-dialog
+      v-model="activeModalShare"
+      title="Share"
+      width="30%"
+      destroy-on-close
+      center
+      align-center
+    >
+      <div class="shared-content-container">
+        <span class="shared-text">{{ sharedText.slice(0, 24) + ' ...' }}</span>
+        <button
+          class="btn-copy"
+          @click="shareTable"
+        >
+          Copy
+        </button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -134,5 +159,33 @@
 }
 .btn-cancel:active {
   background-color: #cfcccc;
+}
+
+.shared-text {
+  background-color: #d4d2d2;
+  padding: 10px;
+  border-color: transparent;
+  border-radius: 12px;
+}
+
+.shared-content-container {
+  height: fit-content;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.btn-copy {
+  background-color: #598bff;
+  color: white;
+  padding: 2px 10px;
+  border-color: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-copy:active {
+  background-color: #456bc4;
 }
 </style>
