@@ -30,8 +30,9 @@ defineProps<{ active: boolean }>();
   opacity: 1;
 }
 .modal-sub-container {
-  min-width: 416.7px;
+  width: 416.7px;
   min-height: 486.5px;
+  max-height: 100%;
   background-color: white;
   border-radius: 12px;
   display: flex;

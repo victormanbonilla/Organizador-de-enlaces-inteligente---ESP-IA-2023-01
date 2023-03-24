@@ -86,6 +86,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 0;
+  flex: 1;
 }
 .form-consults-title {
   font-size: 22px;

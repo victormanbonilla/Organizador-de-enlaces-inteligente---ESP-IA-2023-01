@@ -1,4 +1,4 @@
-import { inject, onMounted, ref, defineComponent } from 'vue';
+import { inject, onMounted, ref, defineComponent, markRaw } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useForm } from 'vee-validate';
 
@@ -10,6 +10,7 @@ import AppModal from '../components/AppModal.vue';
 import { useConsults } from '../composables/useConsults';
 import { keyFormState } from '../utils/formKey';
 import { Table } from '../interfaces/consult';
+import { object, string, array } from 'yup';
 
 interface ConsultForm {
   consults: Array<string>;
@@ -28,11 +29,18 @@ export default defineComponent({
     const [formState, setFormState] = inject(keyFormState)!;
     const spinnerState = ref(false);
 
+
+    const urlRegex = /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
+    const schema = markRaw(object({
+      consults: array().of(string().required().matches(urlRegex, "Enter a valid url"))
+    }));
+
     const { getConsults, saveConsults, deleteTable } = useConsults();
     const { handleSubmit } = useForm<ConsultForm>({
       initialValues: {
         consults: [''],
       },
+      validationSchema: schema
     });
 
     const success = () => {

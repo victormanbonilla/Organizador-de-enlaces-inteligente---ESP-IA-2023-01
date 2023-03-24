@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Field, useFieldArray } from 'vee-validate';
+import { Field, useFieldArray, ErrorMessage } from 'vee-validate';
 import AddFormIcon from './AddFormIcon.vue';
 import TrashIcon from './TrashIcon.vue';
 import UrlIcon from './UrlIcon.vue';
@@ -40,6 +40,12 @@ const { remove, push, fields } = useFieldArray<string>(props.arrName);
           <TrashIcon />
         </button>
       </div>
+      <div class="error-message-container">
+        <ErrorMessage
+          :name="`${arrName}[${index}]`"
+          class="custom-error-message"
+        />
+      </div>
     </div>
     <div class="btn-add-container">
       <button
@@ -54,6 +60,16 @@ const { remove, push, fields } = useFieldArray<string>(props.arrName);
 </template>
 
 <style scoped>
+.error-message-container {
+  width: 100%;
+  height: fit-content;
+}
+.custom-error-message {
+	font-size: 12px;
+	padding-left: 10px;
+	color: red;
+	font-weight: 500;
+}
 .app-input-container {
   width: 100%;
   display: flex;
