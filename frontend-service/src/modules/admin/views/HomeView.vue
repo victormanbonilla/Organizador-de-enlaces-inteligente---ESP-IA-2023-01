@@ -114,11 +114,9 @@
   border-radius: 10px;
   cursor: pointer;
 }
-
 .btn-save:active {
   background-color: #7d2d61;
 }
-
 .btn-cancel {
   border-color: #9c3979;
   background-color: white;
