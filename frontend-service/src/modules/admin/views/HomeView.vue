@@ -12,7 +12,7 @@
         :date="datum.created_at"
         :index="index"
         :code="datum.code"
-        @delete="($emit) => deleteTable($emit)"
+        @delete="($emit) => onDelete($emit)"
       />
     </div>
     <AppModal :active="formState">

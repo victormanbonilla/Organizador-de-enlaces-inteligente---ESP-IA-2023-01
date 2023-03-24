@@ -70,6 +70,14 @@ export default defineComponent({
       }
     });
 
+    const onDelete = async(code: string) => {
+      const resp = await deleteTable(code);
+      if (resp) {
+        success();
+        getData();
+      }
+    }
+
     onMounted(async () => {
       await getData();
     });
@@ -79,6 +87,7 @@ export default defineComponent({
       setFormState,
       deleteTable,
       onSubmit,
+      onDelete,
 
       // Properties
       spinnerState,
