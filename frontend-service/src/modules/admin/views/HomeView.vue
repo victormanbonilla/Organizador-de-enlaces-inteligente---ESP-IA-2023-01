@@ -26,6 +26,7 @@
           </h1>
           <AppInputArray
             id="arr-urls"
+            :meta="meta"
             arr-name="consults"
             placeholder="https://url.com"
             title="Url"
@@ -36,6 +37,7 @@
           <button
             class="btn-save"
             type="submit"
+            :disabled="!meta.valid"
           >
             Save
           </button>
@@ -117,6 +119,10 @@
 }
 .btn-save:active {
   background-color: #7d2d61;
+}
+.btn-save:disabled {
+  cursor: default;
+  background-color: #63244d;
 }
 .btn-cancel {
   border-color: #9c3979;

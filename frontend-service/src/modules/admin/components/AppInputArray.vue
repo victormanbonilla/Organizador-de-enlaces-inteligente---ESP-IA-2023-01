@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Field, useFieldArray, ErrorMessage } from 'vee-validate';
+import { Field, useFieldArray, ErrorMessage, FormMeta } from 'vee-validate';
 import { ref } from 'vue';
 import AddFormIcon from './AddFormIcon.vue';
 import TrashIcon from './TrashIcon.vue';
@@ -10,6 +10,7 @@ const props = defineProps<{
   arrName: string;
   title: string;
   id: string;
+  meta: FormMeta<any>;
 }>();
 const { remove, push, fields } = useFieldArray<{ url: string; id: number }>(
   props.arrName
@@ -44,7 +45,10 @@ const arrayState = ref(fields.value.length + 1);
           <TrashIcon />
         </button>
       </div>
-      <div class="error-message-container">
+      <div
+        v-if="meta.touched"
+        class="error-message-container"
+      >
         <ErrorMessage
           :name="`${arrName}[${index}].url`"
           as="small"

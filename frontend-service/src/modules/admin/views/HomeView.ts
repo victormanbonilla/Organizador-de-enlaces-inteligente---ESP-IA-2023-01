@@ -1,4 +1,4 @@
-import { inject, onMounted, ref, defineComponent, markRaw } from 'vue';
+import { inject, onMounted, ref, defineComponent, markRaw, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useForm } from 'vee-validate';
 
@@ -25,10 +25,6 @@ export default defineComponent({
     AppModal,
   },
   setup: () => {
-    const data = ref<Table[]>();
-    const [formState, setFormState] = inject(keyFormState)!;
-    const spinnerState = ref(false);
-
     const urlRegex =
       /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
     const schema = markRaw(
@@ -44,13 +40,18 @@ export default defineComponent({
     );
 
     const { getConsults, saveConsults, deleteTable } = useConsults();
-    const { handleSubmit, resetForm } = useForm<ConsultForm>({
+    const { handleSubmit, resetForm, meta } = useForm<ConsultForm>({
       initialValues: {
         consults: [{ url: '', id: 0 }],
       },
       validationSchema: schema,
     });
 
+    const data = ref<Table[]>();
+    const [formState, setFormState] = inject(keyFormState)!;
+    const spinnerState = ref(false);
+    const validForm = computed(() => !meta.value.valid);
+    
     const success = () => {
       ElMessage({
         showClose: true,
@@ -106,7 +107,9 @@ export default defineComponent({
       // Properties
       spinnerState,
       formState,
+      validForm,
       data,
+      meta,
 
       // Componentes
       TableComponent,
