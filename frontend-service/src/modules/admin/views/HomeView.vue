@@ -1,64 +1,4 @@
-<script setup lang="ts">
-import TableComponent from '../components/TableComponent.vue';
-import AppInputArray from '../components/AppInputArray.vue';
-import AppSpinner from '../components/AppSpinner.vue';
-import { useConsults } from '../composables/useConsults';
-import AppModal from '../components/AppModal.vue';
-import { Table } from '../interfaces/consult';
-import { useForm } from 'vee-validate';
-import { inject, onMounted, ref } from 'vue';
-import { keyFormState } from '../utils/formKey';
-import { ElMessage } from 'element-plus';
-
-interface ConsultForm {
-  consults: Array<string>;
-}
-
-const data = ref<Table[]>();
-const [formState, setFormState] = inject(keyFormState)!;
-const spinnerState = ref(false);
-
-const { getConsults, saveConsults, deleteTable } = useConsults();
-const { handleSubmit } = useForm<ConsultForm>({
-  initialValues: {
-    consults: [''],
-  },
-});
-
-const success = () => {
-  ElMessage({
-    showClose: true,
-    message: 'Success',
-    type: 'success',
-  });
-};
-
-const getData = async () => {
-  data.value = await getConsults();
-};
-
-const onDelete = async(code: string) => {
-  const resp = await deleteTable(code);
-  if (resp) {
-    success();
-    getData();
-  }
-}
-
-const onSubmit = handleSubmit(async ({ consults }, { resetForm }) => {
-  const resp = await saveConsults(consults, spinnerState);
-  resetForm();
-  if (resp) {
-    success();
-    setFormState();
-    await getData();
-  }
-});
-
-onMounted(async () => {
-  await getData();
-});
-</script>
+<script lang="ts" src="./HomeView" />
 
 <template>
   <div class="home-container">
@@ -72,7 +12,7 @@ onMounted(async () => {
         :date="datum.created_at"
         :index="index"
         :code="datum.code"
-        @delete="($emit) => onDelete($emit)"
+        @delete="($emit) => deleteTable($emit)"
       />
     </div>
     <AppModal :active="formState">

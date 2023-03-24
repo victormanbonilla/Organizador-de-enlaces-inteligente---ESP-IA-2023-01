@@ -10,9 +10,7 @@ const table = ref<SharedTable>();
 
 onMounted(async () => {
   const id = params.id;
-  const { data } = await http.get<getSharedTable>(`/lists/share/${id}`);
-  console.log(data);
-  console.log(import.meta.env.BASE_URL);
+  const { data } = await http.get<getSharedTable>(`https://app.vbonilla.com/api/lists/share/${id}`);
   table.value = data.data;
 });
 </script>
