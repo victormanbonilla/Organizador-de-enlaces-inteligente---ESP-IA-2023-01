@@ -32,7 +32,7 @@ export default defineComponent({
 
     const urlRegex = /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
     const schema = markRaw(object({
-      consults: array().of(string().required().matches(urlRegex, "Enter a valid url"))
+      consults: array().of(string().matches(urlRegex, "Enter a valid url").required())
     }));
 
     const { getConsults, saveConsults, deleteTable } = useConsults();
