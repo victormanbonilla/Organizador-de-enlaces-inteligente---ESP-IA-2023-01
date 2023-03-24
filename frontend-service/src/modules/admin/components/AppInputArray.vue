@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Field, useFieldArray, ErrorMessage } from 'vee-validate';
+import { ref } from 'vue';
 import AddFormIcon from './AddFormIcon.vue';
 import TrashIcon from './TrashIcon.vue';
 import UrlIcon from './UrlIcon.vue';
@@ -10,14 +11,17 @@ const props = defineProps<{
   title: string;
   id: string;
 }>();
-const { remove, push, fields } = useFieldArray<string>(props.arrName);
+const { remove, push, fields } = useFieldArray<{ url: string; id: number }>(
+  props.arrName
+);
+const arrayState = ref(fields.value.length + 1);
 </script>
 
 <template>
   <div class="app-input-container">
     <div
       v-for="(_, index) in fields"
-      :key="index"
+      :key="`item${index}`"
       class="form-controls-container"
     >
       <label :for="id">{{ title }}</label>
@@ -28,7 +32,7 @@ const { remove, push, fields } = useFieldArray<string>(props.arrName);
             :id="id"
             type="search"
             class="custom-input"
-            :name="`${arrName}[${index}]`"
+            :name="`${arrName}[${index}].url`"
             :placeholder="placeholder"
           />
         </div>
@@ -42,7 +46,7 @@ const { remove, push, fields } = useFieldArray<string>(props.arrName);
       </div>
       <div class="error-message-container">
         <ErrorMessage
-          :name="`${arrName}[${index}]`"
+          :name="`${arrName}[${index}].url`"
           class="custom-error-message"
         />
       </div>
@@ -51,7 +55,10 @@ const { remove, push, fields } = useFieldArray<string>(props.arrName);
       <button
         class="btn-add"
         type="button"
-        @click="push('')"
+        @click="
+          push({ url: '', id: arrayState });
+          arrayState++;
+        "
       >
         <AddFormIcon />
       </button>
@@ -65,10 +72,10 @@ const { remove, push, fields } = useFieldArray<string>(props.arrName);
   height: fit-content;
 }
 .custom-error-message {
-	font-size: 12px;
-	padding-left: 10px;
-	color: red;
-	font-weight: 500;
+  font-size: 12px;
+  padding-left: 10px;
+  color: red;
+  font-weight: 500;
 }
 .app-input-container {
   width: 100%;

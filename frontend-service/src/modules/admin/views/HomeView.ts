@@ -13,7 +13,7 @@ import { Table } from '../interfaces/consult';
 import { object, string, array } from 'yup';
 
 interface ConsultForm {
-  consults: Array<string>;
+  consults: Array<{ url: string; id: number }>;
 }
 
 export default defineComponent({
@@ -29,18 +29,24 @@ export default defineComponent({
     const [formState, setFormState] = inject(keyFormState)!;
     const spinnerState = ref(false);
 
-
-    const urlRegex = /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
-    const schema = markRaw(object({
-      consults: array().of(string().matches(urlRegex, "Enter a valid url").required())
-    }));
+    const urlRegex =
+      /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
+    const schema = markRaw(
+      object({
+        consults: array().of(
+          string()
+            .matches(urlRegex, 'Enter a valid url')
+            .required('Please enter a value')
+        ),
+      })
+    );
 
     const { getConsults, saveConsults, deleteTable } = useConsults();
-    const { handleSubmit } = useForm<ConsultForm>({
+    const { handleSubmit, resetForm } = useForm<ConsultForm>({
       initialValues: {
-        consults: [''],
+        consults: [{ url: '', id: 0 }],
       },
-      validationSchema: schema
+      validationSchema: schema,
     });
 
     const success = () => {
@@ -55,21 +61,9 @@ export default defineComponent({
       data.value = await getConsults();
     };
 
-    const addHttps = (urls: string[]) => {
-      const regex = /^https:\/\//;
-      const cleanUrls = [];
-
-      for (const url of urls) {
-        regex.test(url)
-          ? cleanUrls.push(url)
-          : cleanUrls.push(url.replace(/^http:\/\//, 'https://'));
-      }
-
-      return cleanUrls;
-    };
-
     const onSubmit = handleSubmit(async ({ consults }, { resetForm }) => {
-      const resp = await saveConsults(addHttps(consults), spinnerState);
+      const data = consults.map(consult => (consult.url));
+      const resp = await saveConsults(data, spinnerState);
       resetForm();
       if (resp) {
         success();
@@ -78,13 +72,22 @@ export default defineComponent({
       }
     });
 
-    const onDelete = async(code: string) => {
+    const onClose = () => {
+      setFormState();
+      resetForm({
+        values: {
+          consults: [{ url: '', id: 0 }],
+        },
+      });
+    };
+
+    const onDelete = async (code: string) => {
       const resp = await deleteTable(code);
       if (resp) {
         success();
         getData();
       }
-    }
+    };
 
     onMounted(async () => {
       await getData();
@@ -96,6 +99,7 @@ export default defineComponent({
       deleteTable,
       onSubmit,
       onDelete,
+      onClose,
 
       // Properties
       spinnerState,

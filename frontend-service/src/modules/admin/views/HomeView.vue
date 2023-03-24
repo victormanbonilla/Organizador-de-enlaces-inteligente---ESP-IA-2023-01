@@ -42,7 +42,7 @@
           <button
             class="btn-cancel"
             type="button"
-            @click="setFormState"
+            @click="onClose"
           >
             Cancel
           </button>
