@@ -156,6 +156,7 @@
   padding: 2px 30px;
   border-radius: 10px;
   cursor: pointer;
+  font-weight: 600;
 }
 .btn-cancel:active {
   background-color: #cfcccc;
